@@ -3,13 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
-
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -24,15 +24,17 @@ export default function LoginPage() {
             const data = await res.json();
 
             if (res.ok) {
-                router.push("/dashboard"); // or any next page you want
+                toast.success("Login successful");
+                setTimeout(() => {
+                    router.push("/dashboard");
+                }, 1500);
             } else {
-                alert(data.message || "Invalid credentials");
+                toast.error(data.message || "Invalid credentials");
             }
         } catch (error) {
-            alert("Something went wrong. Please try again.");
+            toast.error("Something went wrong. Please try again.");
         }
     };
-
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
@@ -86,6 +88,8 @@ export default function LoginPage() {
                     </Link>
                 </p>
             </div>
+
+            <ToastContainer position="top-center" autoClose={3000} />
         </div>
     );
 }
