@@ -5,12 +5,17 @@ import { useEffect, useState } from "react";
 export default function Dashboard() {
     const [confessions, setConfessions] = useState([]);
     const [content, setContent] = useState("");
+    const [submitted, setSubmitted] = useState(false);
 
     const fetchConfessions = async () => {
         const res = await fetch("/api/confession");
         const data = await res.json();
         setConfessions(data);
     };
+
+    useEffect(() => {
+        fetchConfessions();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -23,12 +28,8 @@ export default function Dashboard() {
         });
 
         setContent("");
-        fetchConfessions(); // Refresh the list
+        setSubmitted(true); // hide confessions after submission
     };
-
-    useEffect(() => {
-        fetchConfessions();
-    }, []);
 
     return (
         <div className="max-w-xl mx-auto p-4">
@@ -46,15 +47,6 @@ export default function Dashboard() {
                     Submit
                 </button>
             </form>
-
-            <div className="space-y-4">
-                {confessions.map((confession: any) => (
-                    <div key={confession.id} className="border p-3 rounded shadow">
-                        <p>{confession.content}</p>
-                        <small className="text-gray-500">{new Date(confession.createdAt).toLocaleString()}</small>
-                    </div>
-                ))}
-            </div>
         </div>
     );
 }
